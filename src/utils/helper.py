@@ -83,7 +83,7 @@ class DataProcessor:
             })
 
         elif section == 'resource_availabilities':
-            self.data['resource_availabilities'].append(list(map(int, line.split())))
+            self.data['resource_availabilities']=list(map(int, line.split()))
 
     def determine_relation_type(self, job1, job2):
         for relation in self.data['precedence_relations']:
@@ -130,9 +130,8 @@ class DataProcessor:
                     "amount":-max_resource
                 })
 
-        for resource_id, availability in enumerate(self.data['resource_availabilities']):
-            if availability:
-                resources.append({"id": resource_id, "capacity": max(availability), "name": f"Resource {resource_id}"})
+        for resource_id, capacity in enumerate(self.data['resource_availabilities']):
+            resources.append({"id": resource_id, "capacity": capacity, "name": f"Resource {resource_id}"})
 
         return json.dumps({
             "activities": activities,
