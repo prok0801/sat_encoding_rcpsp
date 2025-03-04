@@ -126,7 +126,7 @@ class DataProcessor:
                 max_resource_id = max(resource_requirements, key=resource_requirements.get)
                 consumptions.append({
                     "task_id": job["job"],
-                    "resource_id": max_resource_id.replace("R", ""),
+                    "resource_id": list(resource_requirements.values()).index(max_resource) ,
                     "amount":-max_resource
                 })
 
