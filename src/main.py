@@ -1,10 +1,9 @@
 
-from utils.helper import DataProcessor
+from utils.helper import parse_input
+
+# processor = DataProcessor("assets/dataset","assets/input")
+# processor.handle()
 
 
-# res=parse_dataset_file("/Users/2noscript/workspace/do-more/RCPSP_SAT-Encoding/assets/dataset/j30.sm.tgz/j301_1.sm")
-
-# print(res)
-
-processor = DataProcessor("assets/dataset","assets/input")
-processor.handle()
+res=parse_input("assets/input/j30.sm.tgz")
+print(res)

@@ -1,0 +1,8 @@
+Task ID,Type,Time,Variables,Clauses,Resources Consumed,Start Time,End Time
+0,powerset,308,4933,1402984,None,29,337
+1,powerset,10,4933,1402984,R0: -3,45,55
+2,powerset,1,4933,1402984,None,58,59
+3,powerset,20,4933,1402984,"R0: -3, R1: -3, R2: -3",150,170
+4,powerset,2,4933,1402984,"R0: -3, R3: -3, R4: -3",170,172
+5,powerset,5,4933,1402984,"R0: -3, R3: -3, R4: -3",227,232
+6,powerset,1,4933,1402984,None,233,234

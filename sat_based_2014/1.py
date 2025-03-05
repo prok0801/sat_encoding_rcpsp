@@ -1,51 +1,3 @@
-import json
-from pathlib import Path
-from typing import List, Dict, Tuple, Union
-from openpyxl import Workbook,load_workbook
-from openpyxl.utils import get_column_letter
-import os
-
-
-def parse_input(directory) -> Union[
-    Tuple[List[Dict], List[Dict], List[Dict], List[Dict]],
-    List[Tuple[List[Dict], List[Dict], List[Dict], List[Dict]]],
-]:
-    directory_path = Path(directory)
-    all_datasets = []
-    
-    if not directory_path.exists() or not directory_path.is_dir():
-        print(f"Directory {directory} does not exist or is not a folder.")
-        return []
-        
-    for txt_file in directory_path.rglob("*.json"):
-        try:
-            with open(txt_file, "r", encoding="utf-8") as f:
-                data = json.loads(f.read())
-                
-                tasks = data.get("activities", [])
-                relations = data.get("relations", [])
-                consumptions = data.get("consumptions", [])
-                resources = data.get("resources", [])
-                
-                if not all([isinstance(tasks, list), isinstance(relations, list), 
-                          isinstance(consumptions, list), isinstance(resources, list)]):
-                    print(f"Invalid data format in {txt_file}")
-                    continue
-                    
-                all_datasets.append((tasks, relations, consumptions, resources))
-                
-        except json.JSONDecodeError as e:
-            print(f"JSON parsing error in {txt_file}: {str(e)}")
-            print(f"Full path: {txt_file.absolute()}")
-        except Exception as e:
-            print(f"Error reading {txt_file}: {str(e)}")
-            print(f"Full path: {txt_file.absolute()}")
-    
-    if len(all_datasets) == 1:
-        return all_datasets[0]
-    return all_datasets
-
-
 def export_schedule_to_xlsx(
         schedule, variables, clauses, status, tasks, resources, relations, start_task_id,
         output_file, append=False):
@@ -123,23 +75,3 @@ def export_schedule_to_xlsx(
 
     # Return the last current task ID
     return current_task_id
-
-
-class VariableFactory:
-    def __init__(self):
-        self.var_count = 1
-        self.var_map = {}
-    def get_var(self, name):
-        if name not in self.var_map:
-            self.var_map[name] = self.var_count
-            self.var_count += 1
-        return self.var_map[name]
-
-    def start(self, task_id, time):
-        return self.get_var(f"start_{task_id}_{time}")
-
-    def run(self, task_id, time):
-        return self.get_var(f"run_{task_id}_{time}")
-
-    def consume(self, task_id, resource_id, time, index):
-        return self.get_var(f"consume_{task_id}_{resource_id}_{time}_{index}")
