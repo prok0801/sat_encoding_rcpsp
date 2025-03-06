@@ -1,128 +1,69 @@
 import json
 from pathlib import Path
-from typing import List, Dict, Tuple, Union
+from typing import List, Dict, Tuple, Optional
 from openpyxl import Workbook,load_workbook
-from openpyxl.utils import get_column_letter
-import os
 
 
-def parse_input(directory) -> Union[
-    Tuple[List[Dict], List[Dict], List[Dict], List[Dict]],
-    List[Tuple[List[Dict], List[Dict], List[Dict], List[Dict]]],
-]:
+def parse_input(directory: str) -> Optional[List[Tuple[List[Dict], List[Dict], List[Dict], List[Dict], Path]]]:
     directory_path = Path(directory)
     all_datasets = []
-    
+
     if not directory_path.exists() or not directory_path.is_dir():
-        print(f"Directory {directory} does not exist or is not a folder.")
-        return []
-        
-    for txt_file in directory_path.rglob("*.json"):
+        print(f"Error: Directory {directory} does not exist or is not a folder.\n")
+        return None
+
+    for file_path in directory_path.rglob("*.json"):
         try:
-            with open(txt_file, "r", encoding="utf-8") as f:
-                data = json.loads(f.read())
-                
-                tasks = data.get("activities", [])
-                relations = data.get("relations", [])
-                consumptions = data.get("consumptions", [])
-                resources = data.get("resources", [])
-                
-                if not all([isinstance(tasks, list), isinstance(relations, list), 
-                          isinstance(consumptions, list), isinstance(resources, list)]):
-                    print(f"Invalid data format in {txt_file}")
-                    continue
-                    
-                all_datasets.append((tasks, relations, consumptions, resources))
-                
+            data = json.loads(file_path.read_text(encoding="utf-8"))
+
+            tasks = data.get("activities", [])
+            relations = data.get("relations", [])
+            consumptions = data.get("consumptions", [])
+            resources = data.get("resources", [])
+
+            if not all(isinstance(lst, list) for lst in [tasks, relations, consumptions, resources]):
+                print(f"Warning: Invalid data format in {file_path}\n")
+                continue
+
+            all_datasets.append((tasks, relations, consumptions, resources, file_path))
+
         except json.JSONDecodeError as e:
-            print(f"JSON parsing error in {txt_file}: {str(e)}")
-            print(f"Full path: {txt_file.absolute()}")
+            print(f"Error: JSON parsing error in {file_path} - {str(e)}\n")
         except Exception as e:
-            print(f"Error reading {txt_file}: {str(e)}")
-            print(f"Full path: {txt_file.absolute()}")
-    
-    if len(all_datasets) == 1:
-        return all_datasets[0]
-    return all_datasets
+            print(f"Error: Unable to read {file_path} - {str(e)}\n")
+
+    return all_datasets if all_datasets else None
 
 
 def export_schedule_to_xlsx(
-        schedule, variables, clauses, status, tasks, resources, relations, start_task_id,
-        output_file, append=False):
-    """
-    Export schedule data to an Excel (.xlsx) file with consistent formatting and plain unique sequential task IDs.
+        variables,
+        clauses, 
+        status,
+        tasks,
+        resources,
+        relations,
+        task_id,
+        output_file,
+        time_solve=0,
+        ago_type=None,
+        file_name=None):
 
-    Args:
-        schedule (list): List of scheduled tasks.
-        variables (int): Number of variables in the SAT problem.
-        clauses (int): Number of clauses in the SAT problem.
-        status (str): SAT or UNSAT status of the solution.
-        tasks (list): List of tasks.
-        resources (list): List of resources.
-        relations (list): List of relations.
-        start_task_id (int): Starting ID for the task numbering.
-        output_file (str): Path to output Excel file.
-        append (bool): Whether to append to file or overwrite.
-    """
-    # Define column headers
-    headers = ['Task ID', 'Problem', 'Type', 'Status', 'Time', 'Variables', 'Clauses']
+    headers = ['File Name', 'Problem', 'Type', 'Status', 'Time', 'Variables', 'Clauses']
+    output_path = Path(output_file)
+    
+    problem_field = f"{task_id}-{len(tasks)}-{len(resources)}-{len(relations)}"
 
-    # Derive 'Problem' field: Format tasks-resources-relations
-    num_tasks = len(tasks)
-    num_resources = len(resources)
-    num_relations = len(relations)
-    problem_field = f"{num_tasks}-{num_resources}-{num_relations}"
-
-    # Prepare data rows
-    excel_data = []
-    current_task_id = start_task_id  # Start numbering from the provided ID
-
-    for task in schedule:
-        # Calculate execution time
-        execution_time = task['end_time'] - task['start_time']
-
-        # Append row data as a list
-        row = [
-            current_task_id,  # Task ID
-            problem_field,  # Problem
-            'bcc',  # Type
-            status,  # Status (SAT/UNSAT)
-            execution_time,  # Execution Time
-            variables,  # Number of Variables
-            clauses  # Number of Clauses
-        ]
-        excel_data.append(row)
-        current_task_id += 1
-
-    # Initialize Excel workbook or load existing one
-    if append and os.path.exists(output_file):
-        # Load an existing workbook
-        workbook = load_workbook(output_file)
+    if output_path.is_file():
+        workbook = load_workbook(output_path)
         sheet = workbook.active
-        starting_row = sheet.max_row + 1  # Start appending after the last row
     else:
-        # Create a new workbook
         workbook = Workbook()
         sheet = workbook.active
-        starting_row = 1
+        sheet.append(headers) 
 
-        # Write headers in the first row
-        for col_num, header in enumerate(headers, 1):  # Enumerate starts at index 1
-            col_letter = get_column_letter(col_num)
-            sheet[f"{col_letter}{starting_row}"] = header
-        starting_row += 1  # Move to the first row for data
+    sheet.append([file_name, problem_field, ago_type, status, time_solve, variables, clauses])
 
-    # Write data rows
-    for row_num, row_data in enumerate(excel_data, starting_row):
-        for col_num, cell_data in enumerate(row_data, 1):  # Enumerate starts at index 1
-            col_letter = get_column_letter(col_num)
-            sheet[f"{col_letter}{row_num}"] = cell_data
-
-    # Save the Excel file
-    workbook.save(output_file)
-
-    # Return the last current task ID
-    return current_task_id
+    workbook.save(output_path)
 
 
 class VariableFactory:
