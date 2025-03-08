@@ -2,3 +2,4 @@ python-sat
 openpyxl
 path
 pypblib
+psutil

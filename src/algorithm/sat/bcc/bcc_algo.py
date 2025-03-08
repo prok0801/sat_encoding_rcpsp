@@ -9,7 +9,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl import load_workbook
 
 from utils.helper import VariableFactory
-
+import time
 
 # Equation (6): Mã hóa ràng buộc hoạt động phải bắt đầu tại một thời điểm duy nhất (ALK - AtLeastK)
 def encode_unique_start_instant_alk(solver, vf, max_time, task_id, duration):
@@ -260,8 +260,16 @@ def solve_rcpsp(max_time, tasks, relations, consumptions, resources):
     variables, clauses = solver.nof_vars(), solver.nof_clauses()
 
     # Add logging before solving
-    print(f"Starting SAT solver with {solver.nof_vars()} variables and {solver.nof_clauses()} clauses...")
+    # print(f"Starting SAT solver with {solver.nof_vars()} variables and {solver.nof_clauses()} clauses...")
     
+    # print("solver.solve()",solver.solve())
+
+
+    start_time_solve=time.time()
+    solver.solve()
+    end_time_solve=time.time()
+    print("solver.solve()",end_time_solve - start_time_solve)
+
     if solver.solve():
         model = solver.get_model()
         status = "SAT"

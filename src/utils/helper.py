@@ -39,19 +39,15 @@ def export_schedule_to_xlsx(
         variables,
         clauses, 
         status,
-        tasks,
-        resources,
-        relations,
-        task_id,
         output_file,
         time_solve=0,
         ago_type=None,
-        file_name=None):
+        file_name=None,
+        problem_field=None):
 
     headers = ['File Name', 'Problem', 'Type', 'Status', 'Time', 'Variables', 'Clauses']
     output_path = Path(output_file)
     
-    problem_field = f"{task_id}-{len(tasks)}-{len(resources)}-{len(relations)}"
 
     if output_path.is_file():
         workbook = load_workbook(output_path)
@@ -84,3 +80,29 @@ class VariableFactory:
 
     def consume(self, task_id, resource_id, time, index):
         return self.get_var(f"consume_{task_id}_{resource_id}_{time}_{index}")
+
+
+
+def convert_json_to_old_2014(json_path):
+    json_file = Path(json_path)
+    if json_file.exists():
+        json_string = json_file.read_text(encoding="utf-8")
+        json_data = json.loads(json_string)
+    
+    lines = []
+    
+    for task in json_data.get("activities", []):
+        lines.append(f"task;{task['id']};{task['duration']};{task['name']}")
+    
+    # Process relations
+    for relation in json_data.get("relations", []):
+        lines.append(f"aob;{relation['task_id_1']};{relation['task_id_2']};{relation['relation_type']}")
+    
+    for consumption in json_data.get("consumptions", []):
+        lines.append(f"consumption;{consumption['task_id']};{consumption['resource_id']};{consumption['amount']}")
+
+
+    for resource in json_data.get("resources", []):
+        lines.append(f"resource;{resource['id']};{resource['capacity']};{resource['name']}")
+    
+    return "\n".join(lines)
