@@ -1,4 +1,7 @@
-from sat_based_2014.bcc_2014 import sat_bcc_solve_2014
+from sat_based_2014.bcc_2014 import sat_bcc_solve_2014,convert_json_to_base_2014
 
 
-sat_bcc_solve_2014("C:/Github for Lab/RCPSP_SAT-Encoding/assets/input_test/test.json")
+res=sat_bcc_solve_2014("assets/input_test/j60.sm.tgz/j608_9.json")
+
+
+# print(res)

@@ -1,0 +1,311 @@
+project;0;667;test
+task;1;0;Task 1
+task;2;6;Task 2
+task;3;4;Task 3
+task;4;2;Task 4
+task;5;2;Task 5
+task;6;3;Task 6
+task;7;10;Task 7
+task;8;2;Task 8
+task;9;7;Task 9
+task;10;4;Task 10
+task;11;6;Task 11
+task;12;4;Task 12
+task;13;7;Task 13
+task;14;4;Task 14
+task;15;10;Task 15
+task;16;9;Task 16
+task;17;1;Task 17
+task;18;9;Task 18
+task;19;10;Task 19
+task;20;5;Task 20
+task;21;9;Task 21
+task;22;8;Task 22
+task;23;3;Task 23
+task;24;3;Task 24
+task;25;7;Task 25
+task;26;8;Task 26
+task;27;10;Task 27
+task;28;9;Task 28
+task;29;5;Task 29
+task;30;2;Task 30
+task;31;10;Task 31
+task;32;6;Task 32
+task;33;9;Task 33
+task;34;10;Task 34
+task;35;6;Task 35
+task;36;9;Task 36
+task;37;10;Task 37
+task;38;9;Task 38
+task;39;2;Task 39
+task;40;8;Task 40
+task;41;2;Task 41
+task;42;2;Task 42
+task;43;2;Task 43
+task;44;8;Task 44
+task;45;2;Task 45
+task;46;2;Task 46
+task;47;1;Task 47
+task;48;2;Task 48
+task;49;7;Task 49
+task;50;5;Task 50
+task;51;7;Task 51
+task;52;2;Task 52
+task;53;9;Task 53
+task;54;9;Task 54
+task;55;1;Task 55
+task;56;10;Task 56
+task;57;10;Task 57
+task;58;8;Task 58
+task;59;9;Task 59
+task;60;3;Task 60
+task;61;4;Task 61
+task;62;2;Task 62
+task;63;7;Task 63
+task;64;10;Task 64
+task;65;2;Task 65
+task;66;5;Task 66
+task;67;5;Task 67
+task;68;3;Task 68
+task;69;2;Task 69
+task;70;6;Task 70
+task;71;3;Task 71
+task;72;7;Task 72
+task;73;6;Task 73
+task;74;1;Task 74
+task;75;7;Task 75
+task;76;5;Task 76
+task;77;4;Task 77
+task;78;5;Task 78
+task;79;6;Task 79
+task;80;10;Task 80
+task;81;1;Task 81
+task;82;9;Task 82
+task;83;1;Task 83
+task;84;8;Task 84
+task;85;6;Task 85
+task;86;9;Task 86
+task;87;2;Task 87
+task;88;7;Task 88
+task;89;3;Task 89
+task;90;7;Task 90
+task;91;10;Task 91
+task;92;1;Task 92
+task;93;5;Task 93
+task;94;5;Task 94
+task;95;3;Task 95
+task;96;1;Task 96
+task;97;3;Task 97
+task;98;5;Task 98
+task;99;5;Task 99
+task;100;10;Task 100
+task;101;6;Task 101
+task;102;5;Task 102
+task;103;8;Task 103
+task;104;10;Task 104
+task;105;10;Task 105
+task;106;6;Task 106
+task;107;2;Task 107
+task;108;2;Task 108
+task;109;2;Task 109
+task;110;10;Task 110
+task;111;1;Task 111
+task;112;3;Task 112
+task;113;4;Task 113
+task;114;5;Task 114
+task;115;9;Task 115
+task;116;3;Task 116
+task;117;1;Task 117
+task;118;10;Task 118
+task;119;3;Task 119
+task;120;8;Task 120
+task;121;9;Task 121
+task;122;0;Task 122
+aob;1;3;es
+aob;1;4;ee
+aob;2;65;es
+aob;2;75;ee
+aob;3;6;es
+aob;3;10;ee
+aob;4;9;es
+aob;4;13;ee
+aob;5;26;es
+aob;5;99;ee
+aob;6;21;es
+aob;6;38;ee
+aob;8;23;es
+aob;8;60;ee
+aob;9;59;es
+aob;9;110;ee
+aob;10;53;es
+aob;10;71;ee
+aob;12;17;es
+aob;12;20;ee
+aob;13;44;es
+aob;13;78;ee
+aob;14;34;es
+aob;14;66;ee
+aob;15;30;es
+aob;15;39;ee
+aob;17;24;es
+aob;17;51;ee
+aob;18;61;es
+aob;18;73;ee
+aob;20;76;es
+aob;21;69;es
+aob;21;106;ee
+aob;22;77;es
+aob;22;97;ee
+aob;23;29;es
+aob;23;35;ee
+aob;25;101;es
+aob;30;42;es
+aob;32;48;es
+aob;33;41;es
+aob;33;45;ee
+aob;35;64;es
+aob;38;72;es
+aob;38;95;ee
+aob;39;54;es
+aob;43;77;es
+aob;46;70;es
+aob;49;52;es
+aob;51;91;es
+aob;51;98;ee
+aob;55;105;es
+aob;56;103;es
+aob;59;113;es
+aob;61;111;es
+aob;70;98;es
+aob;72;86;es
+aob;73;94;es
+aob;73;115;ee
+aob;74;91;es
+aob;74;98;ee
+aob;79;113;es
+consumption;1;0;0
+consumption;2;0;-9
+consumption;3;2;-4
+consumption;4;0;-2
+consumption;5;2;-6
+consumption;6;0;-1
+consumption;7;0;-6
+consumption;8;1;-6
+consumption;9;1;-7
+consumption;10;0;-10
+consumption;11;0;-3
+consumption;12;2;-9
+consumption;13;1;-1
+consumption;14;3;-4
+consumption;15;3;-1
+consumption;16;3;-5
+consumption;17;2;-5
+consumption;18;2;-10
+consumption;19;1;-8
+consumption;20;3;-6
+consumption;21;0;-5
+consumption;22;0;-7
+consumption;23;0;-9
+consumption;24;0;-9
+consumption;25;0;-10
+consumption;26;2;-6
+consumption;27;2;-9
+consumption;28;0;-4
+consumption;29;1;-5
+consumption;30;1;-2
+consumption;31;3;-1
+consumption;32;2;-3
+consumption;33;2;-3
+consumption;34;3;-4
+consumption;35;2;-9
+consumption;36;1;-5
+consumption;37;0;-8
+consumption;38;3;-4
+consumption;39;3;-6
+consumption;40;0;-4
+consumption;41;3;-1
+consumption;42;0;-9
+consumption;43;3;-2
+consumption;44;1;-7
+consumption;45;0;-3
+consumption;46;1;-6
+consumption;47;2;-6
+consumption;48;3;-7
+consumption;49;3;-3
+consumption;50;0;-9
+consumption;51;3;-3
+consumption;52;2;-3
+consumption;53;0;-3
+consumption;54;3;-1
+consumption;55;2;-7
+consumption;56;1;-6
+consumption;57;2;-2
+consumption;58;1;-3
+consumption;59;0;-4
+consumption;60;1;-8
+consumption;61;3;-4
+consumption;62;3;-5
+consumption;63;1;-4
+consumption;64;2;-9
+consumption;65;0;-4
+consumption;66;0;-4
+consumption;67;0;-2
+consumption;68;1;-3
+consumption;69;2;-10
+consumption;70;3;-5
+consumption;71;1;-6
+consumption;72;0;-5
+consumption;73;0;-2
+consumption;74;0;-2
+consumption;75;0;-5
+consumption;76;3;-6
+consumption;77;1;-6
+consumption;78;2;-2
+consumption;79;3;-7
+consumption;80;1;-4
+consumption;81;0;-7
+consumption;82;2;-4
+consumption;83;3;-5
+consumption;84;1;-10
+consumption;85;3;-5
+consumption;86;0;-3
+consumption;87;0;-3
+consumption;88;2;-10
+consumption;89;2;-8
+consumption;90;0;-9
+consumption;91;3;-5
+consumption;92;3;-4
+consumption;93;0;-8
+consumption;94;0;-4
+consumption;95;3;-2
+consumption;96;2;-9
+consumption;97;1;-9
+consumption;98;0;-4
+consumption;99;1;-6
+consumption;100;3;-6
+consumption;101;3;-1
+consumption;102;3;-7
+consumption;103;0;-9
+consumption;104;0;-5
+consumption;105;1;-3
+consumption;106;0;-6
+consumption;107;2;-10
+consumption;108;0;-3
+consumption;109;0;-3
+consumption;110;0;-7
+consumption;111;0;-8
+consumption;112;2;-8
+consumption;113;3;-6
+consumption;114;0;-3
+consumption;115;0;-5
+consumption;116;1;-4
+consumption;117;2;-4
+consumption;118;1;-9
+consumption;119;3;-7
+consumption;120;1;-7
+consumption;121;0;-6
+consumption;122;0;0
+resource;0;14;Resource 0
+resource;1;12;Resource 1
+resource;2;13;Resource 2
+resource;3;9;Resource 3

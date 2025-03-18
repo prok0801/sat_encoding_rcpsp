@@ -6,21 +6,39 @@ import json
 
 def sat_bcc_solve_2014(input_json_path):
     bcc_mode = True
+    json_file=Path(input_json_path)
+    if json_file.exists():
+        text_data,tasks,relations,consumptions,resources=convert_json_to_base_2014(input_json_path)
+        problem_field=f"{len(tasks)}-{len(resources)}-{len(relations)}"
+        file_name=json_file.stem
+        ago_type="old_bcc"
 
-    text_data=convert_json_to_base_2014(input_json_path)
-
-    mapper = Mapper.get_mapper()
-    # project = mapper.read_project(project_path)
-    project = mapper.load_data(text_data)
+        mapper = Mapper.get_mapper()
+        # project = mapper.read_project(project_path)
+        project = mapper.load_data(text_data)
 
 
-    # Create algorithm instances
-    # fwd = FowardAlgorithm(project)
-    rcpsp = RCPSPAlgorithm(project, bcc_mode)
+        # Create algorithm instances
+        # fwd = FowardAlgorithm(project)
+        rcpsp = RCPSPAlgorithm(project, bcc_mode)
 
-    # Run calculations
-    # fwd.calculate()
-    rcpsp.calculate()
+        # Run calculations
+        # fwd.calculate()
+        status,time_solve,variables,clauses=rcpsp.calculate()
+        # print( status,time_solve,variables,clauses)
+        # return file_name,problem_field,ago_type,status,time_solve,variables,clauses
+    
+        return{
+            "file_name": file_name,
+            "problem_field": problem_field,
+            "ago_type": ago_type,
+            "status": status,
+            "time_solve": time_solve,
+            "variables": variables,
+            "clauses": clauses
+        }
+
+    
     
 
 
@@ -30,20 +48,26 @@ def convert_json_to_base_2014(json_path):
         json_string = json_file.read_text(encoding="utf-8")
         json_data = json.loads(json_string)
     
+    tasks = json_data.get("activities", [])
+    relations = json_data.get("relations", [])
+    consumptions = json_data.get("consumptions", [])
+    resources = json_data.get("resources", [])
+    max_time=json_data.get("max_time", [])
+
     lines = []
-    lines.append("project;0;6147483647;test")
-    for task in json_data.get("activities", []):
+    lines.append(f"project;0;{max_time};test")
+    for task in tasks:
         lines.append(f"task;{task['id']};{task['duration']};{task['name']}")
     
     # Process relations
-    for relation in json_data.get("relations", []):
+    for relation in relations:
         lines.append(f"aob;{relation['task_id_1']};{relation['task_id_2']};{relation['relation_type']}")
     
-    for consumption in json_data.get("consumptions", []):
+    for consumption in consumptions:
         lines.append(f"consumption;{consumption['task_id']};{consumption['resource_id']};{consumption['amount']}")
 
 
-    for resource in json_data.get("resources", []):
+    for resource in resources:
         lines.append(f"resource;{resource['id']};{resource['capacity']};{resource['name']}")
-    
-    return "\n".join(lines)
+    print("\n".join(lines))
+    return "\n".join(lines),tasks,relations,consumptions,resources

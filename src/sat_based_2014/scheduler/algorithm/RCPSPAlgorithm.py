@@ -1,5 +1,4 @@
 import time
-import psutil, os
 
 
 from pysat.solvers import Glucose3  # Using Glucose3 instead of Minisat22
@@ -7,7 +6,6 @@ from pysat.solvers import Glucose3  # Using Glucose3 instead of Minisat22
 # Import the project’s modules.
 from ..encoding.SATEncoder import SATEncoder
 from ..encoding.SATDecoder import SATDecoder
-from ..log.Log import Log
 from .Algorithm import Algorithm
 
 # Define a simple TimeoutException in case one is needed.
@@ -42,22 +40,33 @@ class  RCPSPAlgorithm(Algorithm):
         min_time = self.get_min_time(self.project.get_activities()) - 1
         max_time = self.get_max_time(self.project.get_activities())
         if max_time > 0:
-            self.encoder = SATEncoder.get_encoder()
             print("Encoding starts...")
-            self.encode_time_start = int(time.time() * 1000)
+            self.encoder = SATEncoder.get_encoder()
+            encodeTimeStart=time.time()
+
             self.encoder.encode(self.solver, self.project, max_time, self.bcc_mode)
-            self.encode_time_end = int(time.time() * 1000)
-            print(self.encode_time_end - self.encode_time_start)
+            encodeTimeEnd=time.time()
+            time_solve=encodeTimeEnd- encodeTimeStart
+
+            print("end_time_solve - start_time_solve",time_solve)
+            
             self.decoder = SATDecoder.get_decoder()
             try:
-                self.solve_problem(min_time, max_time)
+                sovel_start=time.time()
+                status,variables, clauses=self.solve_problem(min_time, max_time)
+                sovel_end=time.time()
+                print("sovel_end - sovel_start",sovel_end - sovel_start)
+                print(status,time_solve,variables,clauses)
+                self.reset_algorithm()
+                return status,time_solve,variables,clauses
+
             except TimeoutException:
                 self.reset_algorithm("TimeoutException")
             except MemoryError:
                 self.reset_algorithm("OutOfMemoryError")
         else:
             print("No encoding necessary! Project duration: " + str(max_time))
-        self.reset_algorithm()
+        
 
     def set_mode(self, bcc_mode):
         """Sets the resource encoding mode."""
@@ -75,50 +84,36 @@ class  RCPSPAlgorithm(Algorithm):
         initial_max_time = max_time
         solver = self.solver  # the PySAT solver instance
         sat = False
+        status=None
         while max_time - min_time > 1:
             mid_time = self.get_mid_time(min_time, max_time)
-            # encoder.get_assumptions() should return a list of integer literals.
             assumptions = self.encoder.get_assumptions(mid_time, initial_max_time)
-            sat = solver.solve(assumptions=assumptions)
+            sat = self.solver.solve(assumptions=assumptions)
             if sat:
                 max_time = mid_time
             else:
                 min_time = mid_time
+        variables, clauses = self.solver.nof_vars(), self.solver.nof_clauses()
         
         if sat:
-            sat = "SAT"
             model = solver.get_model()
             self.decoder.decode(self.project, model)
-            print("Project duration: " + str(max_time))
+            status="SAT"
         else:
-            unsat = "UNSAT"
+            status="UNSAT"
             last_sat_solution = self.solve_problem_for_initial_max_time(initial_max_time, solver)
             if last_sat_solution is not None:
+                status="SAT"
                 self.decoder.decode(self.project, last_sat_solution)
-                print("Project duration: " + str(initial_max_time))
-        
-        process = psutil.Process(os.getpid())
-        mem_mb = process.memory_info().rss / (1024 * 1024)
 
 
-        print(
-            self.project.get_name() + ";" +
-            str(self.encode_time_end - self.encode_time_start) + " ms;" +
-            # str(sat_time_end - sat_time_start) + " ms;" +
-            str(mem_mb) + " mb"
-        )
-        print("Done")
+        return status,variables, clauses
 
         
 
     def init_solver(self):
-        """
-        Initializes the SAT solver.
-        
-        :return: An instance of a PySAT solver.
-        """
-        # Note: Minisat22 from python-sat does not support a built-in timeout.
         solver = Glucose3()
+        solver.conf_budget(3600 * 1000)  # Giới hạn thời gian 1 giờ (milliseconds)
         return solver
 
     def get_min_time(self, activities):
@@ -184,7 +179,6 @@ class  RCPSPAlgorithm(Algorithm):
         :param cause: Optional string describing why the reset is occurring.
         """
         if cause:
-            Log.write_log(self.project.get_name() + " - " + cause)
             print(self.project.get_name() + " - " + cause)
         if self.solver is not None:
             self.solver.delete()  # Free resources held by the PySAT solver.

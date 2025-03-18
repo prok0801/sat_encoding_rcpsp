@@ -3,7 +3,6 @@
 from math import pow
 from ..encoding.BCCEncoder import BCCEncoder
 from ..encoding.VariableFactory import VariableFactory
-from ..log.Log import Log  # Adjust this import as needed
 
 class SATEncoder:
     _encoder = None  # Singleton instance
@@ -26,7 +25,6 @@ class SATEncoder:
             self.encode_runtime(solver, maxTime, project.get_activities())
             self.encode_work_load(solver, maxTime, project.get_activities())
             self.encode_relations(solver, maxTime, project.get_relations())
-            Log.d("test")
             if bccMode:
                 self.encode_resources_with_cardinalities(solver, maxTime,
                                                          project.get_activities(),
@@ -255,13 +253,13 @@ class SATEncoder:
 
     def consum_to_string(self, consums: list):
         for consum in consums:
-            Log.d(self.variable_factory.get_string_from_id(consum))
+            print(self.variable_factory.get_string_from_id(consum))
 
     def consum_to_string_with_prefix(self, x, consums: list):
         result = "\n" + self.variable_factory.get_string_from_id(x)
         for consum in consums:
             result += self.variable_factory.get_string_from_id(consum) + ","
-        Log.d(result)   
+        print(result)
 
     def neg(self, var: int) -> int:
         return -var

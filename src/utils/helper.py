@@ -36,14 +36,15 @@ def parse_input(directory: str) -> Optional[List[Tuple[List[Dict], List[Dict], L
 
 
 def export_schedule_to_xlsx(
-        variables,
-        clauses, 
-        status,
-        output_file,
-        time_solve=0,
-        ago_type=None,
         file_name=None,
-        problem_field=None):
+        problem_field=None,
+        ago_type=None,
+        status=None,
+        time_solve=0,
+        variables=None,
+        clauses=None, 
+        output_file=None,
+        ):
 
     headers = ['File Name', 'Problem', 'Type', 'Status', 'Time', 'Variables', 'Clauses']
     output_path = Path(output_file)
@@ -83,26 +84,3 @@ class VariableFactory:
 
 
 
-def convert_json_to_old_2014(json_path):
-    json_file = Path(json_path)
-    if json_file.exists():
-        json_string = json_file.read_text(encoding="utf-8")
-        json_data = json.loads(json_string)
-    
-    lines = []
-    
-    for task in json_data.get("activities", []):
-        lines.append(f"task;{task['id']};{task['duration']};{task['name']}")
-    
-    # Process relations
-    for relation in json_data.get("relations", []):
-        lines.append(f"aob;{relation['task_id_1']};{relation['task_id_2']};{relation['relation_type']}")
-    
-    for consumption in json_data.get("consumptions", []):
-        lines.append(f"consumption;{consumption['task_id']};{consumption['resource_id']};{consumption['amount']}")
-
-
-    for resource in json_data.get("resources", []):
-        lines.append(f"resource;{resource['id']};{resource['capacity']};{resource['name']}")
-    
-    return "\n".join(lines)

@@ -1,15 +1,8 @@
-import os
 
 from pypblib import pblib
 from pypblib.pblib import PBConfig, Pb2cnf
 from pysat.solvers import Glucose3
-
-from openpyxl import Workbook
-from openpyxl.utils import get_column_letter
-from openpyxl import load_workbook
-
 from utils.helper import VariableFactory
-import time
 
 # Equation (6): Mã hóa ràng buộc hoạt động phải bắt đầu tại một thời điểm duy nhất (ALK - AtLeastK)
 def encode_unique_start_instant_alk(solver, vf, max_time, task_id, duration):
@@ -33,6 +26,10 @@ def encode_unique_start_instant_alk(solver, vf, max_time, task_id, duration):
     for t1 in range(max_time - duration + 1):
         for t2 in range(t1 + 1, max_time - duration + 1):
             solver.add_clause([-vf.start(task_id, t1), -vf.start(task_id, t2)])
+
+
+
+
 
 # Equation (7): Mã hóa ràng buộc giới hạn thời gian bắt đầu
 def encode_start_in_time(solver, vf, max_time, task_id, duration):
@@ -75,6 +72,21 @@ def encode_runtime(solver, vf, max_time, task_id, duration):
             # Nếu trong khoảng thời gian thực hiện, phải chạy
             else:
                 solver.add_clause([-start_var, run_var])
+
+
+    # for t in range(max_time):
+    #     start_var = vf.start(task_id, t)
+
+    #     # Ràng buộc: nếu bắt đầu tại t, phải chạy từ t đến min(t + duration - 1, max_time - 1)
+    #     for j in range(t, min(t + duration, max_time)):
+    #         run_var = vf.run(task_id, j)
+    #         solver.add_clause([-start_var, run_var])  # Phải chạy trong khoảng hợp lệ
+
+    #     # Ràng buộc: nếu ngoài khoảng thời gian hợp lệ, không thể chạy
+    #     for j in range(0, t):
+    #         solver.add_clause([-start_var, -vf.run(task_id, j)])
+    #     for j in range(t + duration, max_time):
+    #         solver.add_clause([-start_var, -vf.run(task_id, j)])
 
 # Equation (10): Mã hóa quan hệ "Finish-to-Start"
 def encode_relation_fs(solver, vf, max_time, task1, task2, duration1):
@@ -134,7 +146,7 @@ def encode_resource_constraint_cardinality(solver, vf, max_time, tasks, resource
     pbConfig = PBConfig()  # Cấu hình cho PBLib
     pbConfig.set_AMK_Encoder(pblib.AMK_CARD)  # Dùng NSC Encoder cho AtMostK (NSC là một thuật toán mã hóa cho BCC)
     pb2 = Pb2cnf(pbConfig)  # Tạo đối tượng Pb2cnf để mã hóa các ràng buộc
-
+     
     # Lặp qua từng thời điểm từ 0 đến max_time
     for t in range(max_time):
         # Lặp qua từng tài nguyên
@@ -230,9 +242,11 @@ def solve_rcpsp(max_time, tasks, relations, consumptions, resources):
     vf = VariableFactory()
 
     # Add logging for encoding process
-    print(f"Encoding constraints for {len(tasks)} tasks and {len(resources)} resources...")
+    # print(f"Encoding constraints for {len(tasks)} tasks and {len(resources)} resources...")
     
     # Encoding tasks with ALK, start time, runtime constraints
+
+    
     for task in tasks:
         encode_unique_start_instant_alk(solver, vf, max_time, task["id"], task["duration"])
         encode_start_in_time(solver, vf, max_time, task["id"], task["duration"])
@@ -257,103 +271,31 @@ def solve_rcpsp(max_time, tasks, relations, consumptions, resources):
     encode_resource_constraint_cardinality(solver, vf, max_time, tasks, resources)
 
     # Solve the problem and calculate variables & clauses
-    variables, clauses = solver.nof_vars(), solver.nof_clauses()
+    
 
     # Add logging before solving
     # print(f"Starting SAT solver with {solver.nof_vars()} variables and {solver.nof_clauses()} clauses...")
-    
-    # print("solver.solve()",solver.solve())
+    # variables, clauses = solver.nof_vars(), solver.nof_clauses()
+    # print("solver.solve()",variables, clauses)
 
 
-    start_time_solve=time.time()
-    solver.solve()
-    end_time_solve=time.time()
-    print("solver.solve()",end_time_solve - start_time_solve)
+    # start_time_solve=time.time()
+    # solver.solve()
+    # end_time_solve=time.time()
+    # print("solver.solve()",end_time_solve - start_time_solve)
 
     if solver.solve():
-        model = solver.get_model()
         status = "SAT"
+        variables, clauses = solver.nof_vars(), solver.nof_clauses()
+        model = solver.get_model()
         solver.delete()
+        
+        print("XXX",status)
         return model, vf, variables, clauses, status  # Capture variables and clauses
     else:
         status = "UNSAT"
         solver.delete()
-        return None, None, variables, clauses, status
+        print("XXX",status)
 
-def export_schedule_to_xlsx(
-        schedule, variables, clauses, status, tasks, resources, relations, start_task_id,
-        output_file, append=False):
-    """
-    Export schedule data to an Excel (.xlsx) file with consistent formatting and plain unique sequential task IDs.
+        return None, None, None, None, status
 
-    Args:
-        schedule (list): List of scheduled tasks.
-        variables (int): Number of variables in the SAT problem.
-        clauses (int): Number of clauses in the SAT problem.
-        status (str): SAT or UNSAT status of the solution.
-        tasks (list): List of tasks.
-        resources (list): List of resources.
-        relations (list): List of relations.
-        start_task_id (int): Starting ID for the task numbering.
-        output_file (str): Path to output Excel file.
-        append (bool): Whether to append to file or overwrite.
-    """
-    # Define column headers
-    headers = ['Task ID', 'Problem', 'Type', 'Status', 'Time', 'Variables', 'Clauses']
-
-    # Derive 'Problem' field: Format tasks-resources-relations
-    num_tasks = len(tasks)
-    num_resources = len(resources)
-    num_relations = len(relations)
-    problem_field = f"{num_tasks}-{num_resources}-{num_relations}"
-
-    # Prepare data rows
-    excel_data = []
-    current_task_id = start_task_id  # Start numbering from the provided ID
-
-    for task in schedule:
-        # Calculate execution time
-        execution_time = task['end_time'] - task['start_time']
-
-        # Append row data as a list
-        row = [
-            current_task_id,  # Task ID
-            problem_field,  # Problem
-            'bcc',  # Type
-            status,  # Status (SAT/UNSAT)
-            execution_time,  # Execution Time
-            variables,  # Number of Variables
-            clauses  # Number of Clauses
-        ]
-        excel_data.append(row)
-        current_task_id += 1
-
-    # Initialize Excel workbook or load existing one
-    if append and os.path.exists(output_file):
-        # Load an existing workbook
-        workbook = load_workbook(output_file)
-        sheet = workbook.active
-        starting_row = sheet.max_row + 1  # Start appending after the last row
-    else:
-        # Create a new workbook
-        workbook = Workbook()
-        sheet = workbook.active
-        starting_row = 1
-
-        # Write headers in the first row
-        for col_num, header in enumerate(headers, 1):  # Enumerate starts at index 1
-            col_letter = get_column_letter(col_num)
-            sheet[f"{col_letter}{starting_row}"] = header
-        starting_row += 1  # Move to the first row for data
-
-    # Write data rows
-    for row_num, row_data in enumerate(excel_data, starting_row):
-        for col_num, cell_data in enumerate(row_data, 1):  # Enumerate starts at index 1
-            col_letter = get_column_letter(col_num)
-            sheet[f"{col_letter}{row_num}"] = cell_data
-
-    # Save the Excel file
-    workbook.save(output_file)
-
-    # Return the last current task ID
-    return current_task_id

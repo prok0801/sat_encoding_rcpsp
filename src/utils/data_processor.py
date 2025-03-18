@@ -125,12 +125,15 @@ class DataProcessor:
         for job in self.data['job_details']:
             resource_requirements = job['resource_requirements']
             max_resource = max(resource_requirements.values())
-            if max_resource > 0:
-                consumptions.append({
-                    "task_id": job["job"],
-                    "resource_id": list(resource_requirements.values()).index(max_resource) ,
-                    "amount":-max_resource
-                })
+            if max_resource==0:
+                print("max_resource",resource_requirements.values())
+
+            # if max_resource > 0:
+            consumptions.append({
+                "task_id": job["job"],
+                "resource_id": list(resource_requirements.values()).index(max_resource) ,
+                "amount":-max_resource
+            })
 
         for resource_id, capacity in enumerate(self.data['resource_availabilities']):
             resources.append({"id": resource_id, "capacity": capacity, "name": f"Resource {resource_id}"})
