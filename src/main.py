@@ -23,12 +23,12 @@ def sat_bcc_test(input_path,xlsx_output_path):
     for index, file_path in enumerate(directory_path.rglob("*.json")):
         # print(file_path)
         result_n_bcc=sat_bcc_solve(file_path)
-        # result_old_bcc=sat_bcc_solve_2014(file_path)
+        result_old_bcc=sat_bcc_solve_2014(file_path)
         result_n_bcc['problem_field']=f"{index+1}-{result_n_bcc['problem_field']}"
-        # result_old_bcc['problem_field']=f"{index+1}-{result_old_bcc['problem_field']}"
+        result_old_bcc['problem_field']=f"{index+1}-{result_old_bcc['problem_field']}"
 
         export_schedule_to_xlsx(**result_n_bcc,output_file=xlsx_output_path)
-        # export_schedule_to_xlsx(**result_old_bcc,output_file=xlsx_output_path)
+        export_schedule_to_xlsx(**result_old_bcc,output_file=xlsx_output_path)
 
 
 # sat_bcc_test("assets/input/j30.sm.tgz","bcc.xlsx")    
