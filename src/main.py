@@ -37,7 +37,7 @@ def sat_bcc_test(input_path,xlsx_output_path):
 
 
 # sat_bcc_test("assets/input/j30.sm.tgz","bcc.xlsx")    
-sat_bcc_test("assets/test","bcc.xlsx")    
+sat_bcc_test("assets/input/j30.sm.tgz","bcc.xlsx")    
 
 
 

@@ -92,7 +92,7 @@ class Mapper:
         if type_str == "project":
             # parts[3] is the project name.
             # In Java, the second and third parameters were 0 and Integer.MAX_VALUE;
-            # here we use 0 and sys.maxsize.
+            # here I use 0 and sys.maxsize.
             self.project = Project(parts[3], 0, sys.maxsize)
         elif type_str == "task":
             id_ = int(parts[1])

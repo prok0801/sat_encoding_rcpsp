@@ -3,9 +3,10 @@
 from ..encoding.BCCEncoder import BCCEncoder
 from ..encoding.VariableFactory import VariableFactory
 from .bcc_encoder_pblib import BCCEncoderPblib
-
+from .bcc_encoder_sequential_counter import BCCEncoderSequentialCounter
 
 bcc_pblib=BCCEncoderPblib()
+bcc_sc=BCCEncoderSequentialCounter()
 class SATEncoder:
     _encoder = None  # Singleton instance
 
@@ -28,7 +29,7 @@ class SATEncoder:
             self.encode_work_load(solver, maxTime, project.get_activities())
             self.encode_relations(solver, maxTime, project.get_relations())
             if bccMode:
-                bcc_pblib.encode_resources_with_cardinalities(solver, maxTime,
+                bcc_sc.encode_resources_with_cardinalities(solver, maxTime,
                                                          project.get_activities(),
                                                          project.get_resources())
             else:
