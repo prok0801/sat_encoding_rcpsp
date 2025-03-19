@@ -3,6 +3,7 @@ from utils.helper import export_schedule_to_xlsx
 from pathlib import Path
 from algorithm.sat.bcc.bcc_main import sat_bcc_solve
 from sat_based_2014.bcc_2014 import sat_bcc_solve_2014
+from sat_2025.sat_solve import sat_solve_2025
 
 # processor = DataProcessor("assets/dataset","assets/input")
 # processor.handle()
@@ -22,13 +23,17 @@ def sat_bcc_test(input_path,xlsx_output_path):
         return None
     for index, file_path in enumerate(directory_path.rglob("*.json")):
         # print(file_path)
-        result_n_bcc=sat_bcc_solve(file_path)
-        result_old_bcc=sat_bcc_solve_2014(file_path)
-        result_n_bcc['problem_field']=f"{index+1}-{result_n_bcc['problem_field']}"
-        result_old_bcc['problem_field']=f"{index+1}-{result_old_bcc['problem_field']}"
+        # result_n_bcc=sat_bcc_solve(file_path)
+        # result_old_bcc=sat_bcc_solve_2014(file_path)
+        result_bcc_2025=sat_solve_2025(file_path)
+        # result_n_bcc['problem_field']=f"{index+1}-{result_n_bcc['problem_field']}"
+        # result_old_bcc['problem_field']=f"{index+1}-{result_old_bcc['problem_field']}"
+        result_bcc_2025['problem_field']=f"{index+1}-{result_bcc_2025['problem_field']}"
 
-        export_schedule_to_xlsx(**result_n_bcc,output_file=xlsx_output_path)
-        export_schedule_to_xlsx(**result_old_bcc,output_file=xlsx_output_path)
+
+        # export_schedule_to_xlsx(**result_n_bcc,output_file=xlsx_output_path)
+        # export_schedule_to_xlsx(**result_old_bcc,output_file=xlsx_output_path)
+        export_schedule_to_xlsx(**result_bcc_2025,output_file=xlsx_output_path)
 
 
 # sat_bcc_test("assets/input/j30.sm.tgz","bcc.xlsx")    

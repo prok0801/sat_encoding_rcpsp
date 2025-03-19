@@ -1,0 +1,426 @@
+{
+  "activities": [
+    {
+      "id": 1,
+      "duration": 0,
+      "name": "Task 1"
+    },
+    {
+      "id": 2,
+      "duration": 6,
+      "name": "Task 2"
+    },
+    {
+      "id": 3,
+      "duration": 8,
+      "name": "Task 3"
+    },
+    {
+      "id": 4,
+      "duration": 5,
+      "name": "Task 4"
+    },
+    {
+      "id": 5,
+      "duration": 9,
+      "name": "Task 5"
+    },
+    {
+      "id": 6,
+      "duration": 7,
+      "name": "Task 6"
+    },
+    {
+      "id": 7,
+      "duration": 8,
+      "name": "Task 7"
+    },
+    {
+      "id": 8,
+      "duration": 10,
+      "name": "Task 8"
+    },
+    {
+      "id": 9,
+      "duration": 6,
+      "name": "Task 9"
+    },
+    {
+      "id": 10,
+      "duration": 1,
+      "name": "Task 10"
+    },
+    {
+      "id": 11,
+      "duration": 10,
+      "name": "Task 11"
+    },
+    {
+      "id": 12,
+      "duration": 6,
+      "name": "Task 12"
+    },
+    {
+      "id": 13,
+      "duration": 3,
+      "name": "Task 13"
+    },
+    {
+      "id": 14,
+      "duration": 6,
+      "name": "Task 14"
+    },
+    {
+      "id": 15,
+      "duration": 8,
+      "name": "Task 15"
+    },
+    {
+      "id": 16,
+      "duration": 2,
+      "name": "Task 16"
+    },
+    {
+      "id": 17,
+      "duration": 8,
+      "name": "Task 17"
+    },
+    {
+      "id": 18,
+      "duration": 6,
+      "name": "Task 18"
+    },
+    {
+      "id": 19,
+      "duration": 9,
+      "name": "Task 19"
+    },
+    {
+      "id": 20,
+      "duration": 6,
+      "name": "Task 20"
+    },
+    {
+      "id": 21,
+      "duration": 9,
+      "name": "Task 21"
+    },
+    {
+      "id": 22,
+      "duration": 10,
+      "name": "Task 22"
+    },
+    {
+      "id": 23,
+      "duration": 3,
+      "name": "Task 23"
+    },
+    {
+      "id": 24,
+      "duration": 4,
+      "name": "Task 24"
+    },
+    {
+      "id": 25,
+      "duration": 10,
+      "name": "Task 25"
+    },
+    {
+      "id": 26,
+      "duration": 4,
+      "name": "Task 26"
+    },
+    {
+      "id": 27,
+      "duration": 9,
+      "name": "Task 27"
+    },
+    {
+      "id": 28,
+      "duration": 9,
+      "name": "Task 28"
+    },
+    {
+      "id": 29,
+      "duration": 3,
+      "name": "Task 29"
+    },
+    {
+      "id": 30,
+      "duration": 9,
+      "name": "Task 30"
+    },
+    {
+      "id": 31,
+      "duration": 1,
+      "name": "Task 31"
+    },
+    {
+      "id": 32,
+      "duration": 0,
+      "name": "Task 32"
+    }
+  ],
+  "relations": [
+    {
+      "task_id_1": 1,
+      "task_id_2": 3,
+      "relation_type": "es"
+    },
+    {
+      "task_id_1": 1,
+      "task_id_2": 4,
+      "relation_type": "ee"
+    },
+    {
+      "task_id_1": 2,
+      "task_id_2": 8,
+      "relation_type": "es"
+    },
+    {
+      "task_id_1": 2,
+      "task_id_2": 14,
+      "relation_type": "ee"
+    },
+    {
+      "task_id_1": 3,
+      "task_id_2": 12,
+      "relation_type": "es"
+    },
+    {
+      "task_id_1": 5,
+      "task_id_2": 15,
+      "relation_type": "es"
+    },
+    {
+      "task_id_1": 5,
+      "task_id_2": 23,
+      "relation_type": "ee"
+    },
+    {
+      "task_id_1": 6,
+      "task_id_2": 22,
+      "relation_type": "es"
+    },
+    {
+      "task_id_1": 7,
+      "task_id_2": 18,
+      "relation_type": "es"
+    },
+    {
+      "task_id_1": 8,
+      "task_id_2": 20,
+      "relation_type": "es"
+    },
+    {
+      "task_id_1": 10,
+      "task_id_2": 26,
+      "relation_type": "es"
+    },
+    {
+      "task_id_1": 10,
+      "task_id_2": 27,
+      "relation_type": "ee"
+    },
+    {
+      "task_id_1": 13,
+      "task_id_2": 25,
+      "relation_type": "es"
+    },
+    {
+      "task_id_1": 15,
+      "task_id_2": 24,
+      "relation_type": "es"
+    },
+    {
+      "task_id_1": 18,
+      "task_id_2": 28,
+      "relation_type": "es"
+    },
+    {
+      "task_id_1": 22,
+      "task_id_2": 31,
+      "relation_type": "es"
+    },
+    {
+      "task_id_1": 24,
+      "task_id_2": 31,
+      "relation_type": "es"
+    }
+  ],
+  "consumptions": [
+    {
+      "task_id": 2,
+      "resource_id": 1,
+      "amount": -7
+    },
+    {
+      "task_id": 3,
+      "resource_id": 1,
+      "amount": -9
+    },
+    {
+      "task_id": 4,
+      "resource_id": 1,
+      "amount": -10
+    },
+    {
+      "task_id": 5,
+      "resource_id": 2,
+      "amount": -10
+    },
+    {
+      "task_id": 6,
+      "resource_id": 0,
+      "amount": -9
+    },
+    {
+      "task_id": 7,
+      "resource_id": 1,
+      "amount": -9
+    },
+    {
+      "task_id": 8,
+      "resource_id": 1,
+      "amount": -9
+    },
+    {
+      "task_id": 9,
+      "resource_id": 2,
+      "amount": -10
+    },
+    {
+      "task_id": 10,
+      "resource_id": 0,
+      "amount": -9
+    },
+    {
+      "task_id": 11,
+      "resource_id": 2,
+      "amount": -8
+    },
+    {
+      "task_id": 12,
+      "resource_id": 2,
+      "amount": -9
+    },
+    {
+      "task_id": 13,
+      "resource_id": 0,
+      "amount": -6
+    },
+    {
+      "task_id": 14,
+      "resource_id": 2,
+      "amount": -6
+    },
+    {
+      "task_id": 15,
+      "resource_id": 3,
+      "amount": -10
+    },
+    {
+      "task_id": 16,
+      "resource_id": 3,
+      "amount": -8
+    },
+    {
+      "task_id": 17,
+      "resource_id": 1,
+      "amount": -10
+    },
+    {
+      "task_id": 18,
+      "resource_id": 1,
+      "amount": -7
+    },
+    {
+      "task_id": 19,
+      "resource_id": 1,
+      "amount": -10
+    },
+    {
+      "task_id": 20,
+      "resource_id": 3,
+      "amount": -9
+    },
+    {
+      "task_id": 21,
+      "resource_id": 1,
+      "amount": -8
+    },
+    {
+      "task_id": 22,
+      "resource_id": 0,
+      "amount": -4
+    },
+    {
+      "task_id": 23,
+      "resource_id": 2,
+      "amount": -10
+    },
+    {
+      "task_id": 24,
+      "resource_id": 1,
+      "amount": -9
+    },
+    {
+      "task_id": 25,
+      "resource_id": 0,
+      "amount": -8
+    },
+    {
+      "task_id": 26,
+      "resource_id": 1,
+      "amount": -10
+    },
+    {
+      "task_id": 27,
+      "resource_id": 2,
+      "amount": -10
+    },
+    {
+      "task_id": 28,
+      "resource_id": 3,
+      "amount": -9
+    },
+    {
+      "task_id": 29,
+      "resource_id": 1,
+      "amount": -9
+    },
+    {
+      "task_id": 30,
+      "resource_id": 3,
+      "amount": -9
+    },
+    {
+      "task_id": 31,
+      "resource_id": 0,
+      "amount": -9
+    }
+  ],
+  "resources": [
+    {
+      "id": 0,
+      "capacity": 24,
+      "name": "Resource 0"
+    },
+    {
+      "id": 1,
+      "capacity": 30,
+      "name": "Resource 1"
+    },
+    {
+      "id": 2,
+      "capacity": 25,
+      "name": "Resource 2"
+    },
+    {
+      "id": 3,
+      "capacity": 25,
+      "name": "Resource 3"
+    }
+  ],
+  "max_time": 195
+}

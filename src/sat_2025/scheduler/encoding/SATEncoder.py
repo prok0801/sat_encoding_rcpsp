@@ -1,9 +1,11 @@
 # scheduler/encoding/sat_encoder.py
 
-from math import pow
 from ..encoding.BCCEncoder import BCCEncoder
 from ..encoding.VariableFactory import VariableFactory
+from .bcc_encoder_pblib import BCCEncoderPblib
 
+
+bcc_pblib=BCCEncoderPblib()
 class SATEncoder:
     _encoder = None  # Singleton instance
 
@@ -26,7 +28,7 @@ class SATEncoder:
             self.encode_work_load(solver, maxTime, project.get_activities())
             self.encode_relations(solver, maxTime, project.get_relations())
             if bccMode:
-                self.encode_resources_with_cardinalities(solver, maxTime,
+                bcc_pblib.encode_resources_with_cardinalities(solver, maxTime,
                                                          project.get_activities(),
                                                          project.get_resources())
             else:

@@ -131,10 +131,20 @@ def encode_consumption_atoms(solver, vf, max_time, tasks, resources):
 
 # Equation (5 and 17): BCC resource constraint
 def encode_resource_constraint_cardinality(solver, vf, max_time, tasks, resources):
+    """
+    Mã hóa ràng buộc tài nguyên bằng BCC sử dụng Sequential Counter (NSC) với PBLib.
+
+    Parameters:
+    - solver: Bộ giải SAT.
+    - vf: Lớp quản lý các biến (VariableFactory).
+    - max_time: Thời gian tối đa.
+    - tasks: Danh sách các hoạt động.
+    - resources: Danh sách các tài nguyên.
+    """
     id_variable = int  # Biến toàn cục để đếm số lượng biến được tạo ra trong quá trình mã hóa
 
     pbConfig = PBConfig()  # Cấu hình cho PBLib
-    pbConfig.set_AMK_Encoder(pblib.AMK_CARD)  
+    pbConfig.set_AMK_Encoder(pblib.AMK_CARD)  # Dùng NSC Encoder cho AtMostK (NSC là một thuật toán mã hóa cho BCC)
     pb2 = Pb2cnf(pbConfig)  # Tạo đối tượng Pb2cnf để mã hóa các ràng buộc
      
     # Lặp qua từng thời điểm từ 0 đến max_time
@@ -154,6 +164,7 @@ def encode_resource_constraint_cardinality(solver, vf, max_time, tasks, resource
                 formula = []
                 weights = [1] * len(consumption_vars)  # Tạo trọng số cho các biến (tất cả trọng số là 1)
 
+                # Mã hóa ràng buộc "AtMostK" với NSC: đảm bảo rằng không vượt quá dung lượng tài nguyên
                 max_var = pb2.encode_at_most_k(
                     weights, consumption_vars, resource["capacity"], formula, id_variable
                 )
