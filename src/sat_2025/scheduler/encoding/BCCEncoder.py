@@ -1,5 +1,5 @@
 # from pysat.solvers import Glucose3
-from sat_based_2014.scheduler.encoding.VariableFactory import VariableFactory
+from sat_2025.scheduler.encoding.VariableFactory import VariableFactory
 
 
 class BCCEncoder:
@@ -20,6 +20,7 @@ class BCCEncoder:
         solver.add_clause([-a, -b, carry])
 
     def gen_full_adder(self, solver, a, b, c, sum, carry):
+      
         solver.add_clause([a, b, -c, sum])
         solver.add_clause([a, -b, c, sum])
         solver.add_clause([-a, b, c, sum])

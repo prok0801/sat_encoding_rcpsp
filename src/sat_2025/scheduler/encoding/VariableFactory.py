@@ -101,3 +101,6 @@ class VariableFactory:
 
     def size(self):
         return len(self._variables)
+    
+    def all_variables(self):
+        return self._variables

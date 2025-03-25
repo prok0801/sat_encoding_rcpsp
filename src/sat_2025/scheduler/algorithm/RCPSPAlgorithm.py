@@ -49,15 +49,10 @@ class  RCPSPAlgorithm(Algorithm):
             encodeTimeEnd=time.time()
             time_solve=encodeTimeEnd- encodeTimeStart
 
-            print("end_time_solve - start_time_solve",time_solve)
             
             self.decoder = SATDecoder.get_decoder()
             try:
-                sovel_start=time.time()
                 status,variables, clauses=self.solve_problem(min_time, max_time)
-                sovel_end=time.time()
-                print("sovel_end - sovel_start",sovel_end - sovel_start)
-                print(status,time_solve,variables,clauses)
                 self.reset_algorithm()
                 return status,time_solve,variables,clauses
 
@@ -86,6 +81,7 @@ class  RCPSPAlgorithm(Algorithm):
         solver = self.solver  # the PySAT solver instance
         sat = False
         status=None
+        sat = self.solver.solve(assumptions=assumptions)
         while max_time - min_time > 1:
             mid_time = self.get_mid_time(min_time, max_time)
             assumptions = self.encoder.get_assumptions(mid_time, initial_max_time)

@@ -30,13 +30,18 @@ class SATEncoder:
             self.encode_runtime(solver, maxTime, project.get_activities())
             self.encode_work_load(solver, maxTime, project.get_activities())
             self.encode_relations(solver, maxTime, project.get_relations())
+
+
             if bccMode:
                 # bcc_sc.encode_resources_with_cardinalities(solver, maxTime,
                 #                                          project.get_activities(),
                 #                                          project.get_resources())
-                bcc_core.encode_resources_with_cardinalities(solver, maxTime,
-                                                         project.get_activities(),
-                                                         project.get_resources())
+                # bcc_pblib.encode_resources_with_cardinalities(solver, maxTime,
+                #                                          project.get_activities(),
+                #                                          project.get_resources())
+                self.encode_resources_with_cardinalities(solver, maxTime,
+                                            project.get_activities(),
+                                            project.get_resources())
             else:
                 self.encode_resources_with_powerset(solver, maxTime,
                                                     project.get_activities(),
@@ -220,11 +225,13 @@ class SATEncoder:
                     solver.add_clause(binary_clause)
             for resource in resources:
                 consum_vars_resource = self.get_consume_variables_for_resource_at_instant(resource, activities, time)
-                # print(consum_vars_resource)
                 self.consum_to_string(consum_vars_resource)
                 if consum_vars_resource:
                     bound = resource.get_capacity()
-                    self.counter_encoder.gen_less_than_constraint(solver, bound, consum_vars_resource,
+                    
+                    # self.counter_encoder.gen_less_than_constraint(solver, bound, consum_vars_resource,
+                    #                                                 resource.get_id(), time)
+                    bcc_pblib.gen_less_than_constraint(solver, bound, consum_vars_resource,
                                                                     resource.get_id(), time)
 
     @staticmethod

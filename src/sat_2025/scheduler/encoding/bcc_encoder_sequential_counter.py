@@ -1,4 +1,4 @@
-from sat_based_2014.scheduler.encoding.VariableFactory import VariableFactory
+from sat_2025.scheduler.encoding.VariableFactory import VariableFactory
 
 class BCCEncoderSequentialCounter:
     _encoder = None
@@ -12,13 +12,13 @@ class BCCEncoderSequentialCounter:
             return i * maxTime + t + 1  
 
         for r in resources:
-            capacity = r["capacity"]
+            capacity = r.get_capacity()
 
             for t in range(maxTime):
                 terms = []
 
                 for i in range(1, len(activities) + 1):
-                    duration = activities[i - 1]["duration"]
+                    duration = activities[i - 1].get_duration()
                     for start_time in range(max(0, t - duration + 1), t + 1):
                         terms.append(var(i, start_time))
 
@@ -50,4 +50,4 @@ class BCCEncoderSequentialCounter:
                 solver.add_clause([-s[i-1][j], s[i][j]])  
 
         for j in range(k):
-            solver.add_clause([-s[n-1][j]])  
+            solver.add_clause([-s[n-1][j]])

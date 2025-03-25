@@ -1,37 +1,31 @@
-from sat_based_2014.scheduler.encoding.VariableFactory import VariableFactory
-from pypblib.pblib import PBConfig, Pb2cnf
+# from pysat.solvers import Glucose3
+from sat_2025.scheduler.encoding.VariableFactory import VariableFactory
 from pypblib import pblib
+from pypblib.pblib import PBConfig, Pb2cnf
+
+
 
 class BCCEncoderPblib:
     _encoder = None
 
     def __init__(self):
         self.variable_factory = VariableFactory.get_variable_factory()
+        self.pb_config = PBConfig()
+        self.pb_config.set_AMK_Encoder(pblib.AMK_CARD)
+        self.pb2cnf = Pb2cnf(self.pb_config)
 
-    def encode_resources_with_cardinalities(self,solver, maxTime: int, activities: list, resources: list):
+
+
+     # bound ~ k
+    # inputs ~ list of literals
+    def gen_less_than_constraint(self, solver, bound, inputs, resource_id, time):
+
+        if inputs:
+            cnf_formula=[]
+            max_var=self.pb2cnf.encode_at_most_k(inputs,bound,cnf_formula,inputs[0]+1)
+          
+            for clause in cnf_formula:
+                solver.add_clause(clause)
         
-        pbConfig = PBConfig() 
-        pbConfig.set_AMK_Encoder(pblib.AMK_CARD)  
-        pb2 = Pb2cnf(pbConfig) 
 
-        def var(i, t):
-            return i * maxTime + t + 1  
 
-        for r in resources:
-            capacity = r["capacity"]
-
-            for t in range(maxTime):
-                terms = []
-                coeffs = []
-
-                for i in range(1, len(activities) + 1):
-                    duration = activities[i - 1]["duration"]
-                    for start_time in range(max(0, t - duration + 1), t + 1):
-                        terms.append(var(i, start_time))
-                        coeffs.append(1)  
-                if terms:
-                    constraint = pblib.PBConstraint(terms, coeffs, pblib.BOUND_ATMOST, capacity)
-                    cnf_formula = pb2.encode(constraint).get_clauses()
-
-                    for clause in cnf_formula:
-                        solver.add_clause(clause)

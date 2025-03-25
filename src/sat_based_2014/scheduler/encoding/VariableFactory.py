@@ -8,6 +8,8 @@ class VariableFactory:
     VARIABLE_SUM = 4
     VARIABLE_CARRY = 5
     VARIABLE_CONSUMPTION = 6
+    
+    
 
     _factory = None
     _variables = {}
@@ -49,7 +51,7 @@ class VariableFactory:
 
     def sum(self, resource_id, time, id):
         """Tạo biến SUM."""
-        return self._get_variable(self.VARIABLE_SUM, resource_id, time, id)
+        return self._get_variable(self.VARIABLE_SUM, resource_id, time, id) 
 
     def carry(self, resource_id, time, id):
         """Tạo biến CARRY."""

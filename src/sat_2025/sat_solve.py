@@ -66,5 +66,4 @@ def convert_json_to_base(json_path):
 
     for resource in resources:
         lines.append(f"resource;{resource['id']};{resource['capacity']};{resource['name']}")
-    print("\n".join(lines))
     return "\n".join(lines),tasks,relations,consumptions,resources
