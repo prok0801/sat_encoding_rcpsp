@@ -36,6 +36,7 @@ def parse_input(directory: str) -> Optional[List[Tuple[List[Dict], List[Dict], L
 
 
 def export_schedule_to_xlsx(
+        id,
         file_name=None,
         problem_field=None,
         ago_type=None,
@@ -46,20 +47,21 @@ def export_schedule_to_xlsx(
         output_file=None,
         ):
 
-    headers = ['File Name', 'Problem', 'Type', 'Status', 'Time', 'Variables', 'Clauses']
+    headers = ['Id','File Name', 'Problem', 'Type', 'Status', 'Time', 'Variables', 'Clauses']
     output_path = Path(output_file)
     
-
+    # Create directory if it doesn't exist
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    
     if output_path.is_file():
         workbook = load_workbook(output_path)
         sheet = workbook.active
     else:
         workbook = Workbook()
         sheet = workbook.active
-        sheet.append(headers) 
+        sheet.append(headers)
 
-    sheet.append([file_name, problem_field, ago_type, status, time_solve, variables, clauses])
-
+    sheet.append([id,file_name, problem_field, ago_type, status, time_solve, variables, clauses])
     workbook.save(output_path)
 
 
