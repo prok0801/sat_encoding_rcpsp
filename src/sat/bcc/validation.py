@@ -1,5 +1,6 @@
 import logging
 from typing import List, Dict
+from data.project import Project
 
 def validate_input_data(tasks: List[Dict], relations: List[Dict],
                          consumptions: List[Dict], resources: List[Dict]) -> bool:

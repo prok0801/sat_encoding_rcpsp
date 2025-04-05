@@ -11,19 +11,19 @@ from sat.encoding.se_card_card import SatEncoderCardCard
 # from sat.encoding.se_card_nsc import SatEncoderCardNsc
 from sat.encoding.se_powerset import SatEncoderPowerset
 import time
+from  sat.validate import  validate_project
 
 
 class RcpspAlogithm:
     def __init__(self, project:Project):
         self.project = project
         self.cnf = self._init_solver()
-        # self.encoder = SatEncoder.get_sat_encoder()
         self.decoder= SatDecoder.get_sat_decoder()
         self.vr=VariableFactory.get_variable_factory()
 
 
-    def calculate(self,type_encoder:str=None):
-        sat_encoder=None
+    def calculate(self,type_encoder:str):
+        
         if type_encoder == "bdd_bdd":
             sat_encoder = SatEncoderBddBdd.get_sat_encoder()
         # elif type_encoder == "bdd_nsc":
@@ -39,7 +39,6 @@ class RcpspAlogithm:
         elif type_encoder=="powerset":
             sat_encoder=SatEncoderPowerset.get_sat_encoder()
         
-        
         start_time = time.time()
         sat_encoder.handle(self.cnf,self.project)
         result = self.solve_problem()
@@ -48,15 +47,26 @@ class RcpspAlogithm:
         result['time'] = round(end_time - start_time, 3)
         
         self._reset()
-        print(result)
         return result
 
     
     def solve_problem(self):
+        status="unsat"
+        if self.cnf.solve():
+            status="sat"
+            # try:
+            #     schedule = self.decoder.handle(self.cnf, self.project)
+            #     is_valid, validation_results =validate_project(schedule,self.project)
+            #     print("is_valid",is_valid)
+            #     print("validation_results",validation_results)
+            # except Exception as e:
+            #     status="error"
+            #     print(e)
+            
         result = {
             'vars': self.cnf.nof_vars(),
             'clauses': self.cnf.nof_clauses(),
-            'status': "sat" if self.cnf.solve() else "unsat"
+            'status': status,
         }
         return result
 
@@ -64,6 +74,7 @@ class RcpspAlogithm:
     def _init_solver(self):
         cnf = Glucose3()
         cnf.conf_budget(3600 * 1000)
+        # cnf.get_model()
         return cnf
     
     def _reset(self):

@@ -1,5 +1,4 @@
 from sat.encoding.variable_factory import VariableFactory
-from sat.encoding.bcc_encoder import BCCEncoder
 from sat.data.project import Project
 from sat.data.activity import Activity
 from sat.data.relation import Relation
@@ -7,16 +6,13 @@ from sat.data.resource import Resource
 from sat.data.relation_type import RelationType
 from sat.data.consumption import Consumption
 from typing import List
-from enum import Enum
-from pypblib import pblib
-from pypblib.pblib import PBConfig, Pb2cnf
+from pypblib.pblib import PBConfig, Pb2cnf ,AMK_CARD,AMK_BDD
 
 
 class SatEncoderBddCard:
     _sat_encoder = None
     def __init__(self):
         self.vr = VariableFactory.get_variable_factory()
-        self.bcc= BCCEncoder.get_bcc_encoder()
     
     @classmethod 
     def  get_sat_encoder(cls):
@@ -24,7 +20,7 @@ class SatEncoderBddCard:
             cls._sat_encoder = SatEncoderBddCard()
         return cls._sat_encoder
 
-    def handle(self,cnf, project:Project,mode:str=None):
+    def handle(self,cnf, project:Project):
 
         max_time =project.max_time
         activities = project.activities
@@ -42,7 +38,7 @@ class SatEncoderBddCard:
     # Ràng buộc 1: Mỗi công việc chỉ bắt đầu một lần
     def _encode_unique_Start_instant(self, cnf, max_time: int, activities: List[Activity]):
         pbConfig = PBConfig()
-        pbConfig.set_AMK_Encoder(pblib.AMK_BDD)
+        pbConfig.set_AMK_Encoder(AMK_BDD)
 
         for activity in activities:
             activity_id = activity.id
@@ -120,7 +116,7 @@ class SatEncoderBddCard:
             if relation_type == RelationType.FS:
                  # B does not start before A finishes
                 for t in range(max_time):
-                    literal = self.vr.start(first.get_id(), t)
+                    literal = self.vr.start(activity_id_1, t)
                     for k in range(0, t + activity_1_duration):
                         cnf.add_clause([-literal, -self.vr.start(activity_id_2, k)])
             elif relation_type == RelationType.SS:
@@ -139,7 +135,7 @@ class SatEncoderBddCard:
             elif relation_type == RelationType.SF:
                 # B does not start before A finishes
                 for t in range(max_time):
-                    if time - activity_2_duration > 0:
+                    if max_time - activity_2_duration > 0:
                         literal = self.vr.start(activity_id_1, t)
                         for k in range(0,t - activity_2_duration +2):
                             cnf.add_clause([-literal, -self.vr.start(activity_id_2, k)])
@@ -155,11 +151,13 @@ class SatEncoderBddCard:
             for activity in activities:
                 activity_id=activity.id
                 consumption=self._find_consumption_by_activity_id(activity_id,consumptions)
+                if not consumption:
+                    continue
                 consume_vars=self._get_consume_variables_for_activity_at_instant(activity,consumption,t)
                 for consume_var in consume_vars:
                     cnf.add_clause([-self.vr.run(activity_id,t),consume_var])
             pb_config=PBConfig()
-            pb_config.set_PB_Encoder(pblib.AMK_CARD)
+            pb_config.set_PB_Encoder(AMK_CARD)
             for resource in resources:
                 resource_id=resource.id
                 bound=resource.capacity

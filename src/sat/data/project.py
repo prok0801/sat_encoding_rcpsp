@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import  List
 from sat.data.relation import Relation
 from sat.data.activity import Activity
 from sat.data.resource import Resource
@@ -8,11 +8,11 @@ from pathlib import Path
 import json
 
 class Project:
-    relations: Optional[List[Relation]]
-    activities: Optional[List[Activity]]
-    resources: Optional[List[Resource]]
-    consumptions: Optional[List[Consumption]]
-    max_time: Optional[int]
+    relations: List[Relation]=[]
+    activities: List[Activity]=[]
+    resources:List[Resource]=[]
+    consumptions: List[Consumption]=[]
+    max_time: int=0
 
     def __init__(self, data_path: str):
         data = self._read_json(data_path)
@@ -21,8 +21,8 @@ class Project:
             return
         self.relations = [] 
         self.activities = []
-        self.resources = []
         self.consumptions = []
+        self.resources = []
         self.max_time = data.get("max_time")
         
         self._map_resources(data["resources"])

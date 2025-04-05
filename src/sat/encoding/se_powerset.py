@@ -6,9 +6,7 @@ from sat.data.resource import Resource
 from sat.data.relation_type import RelationType
 from sat.data.consumption import Consumption
 from typing import List
-from enum import Enum
-
-
+from pypblib.pblib import PBConfig, Pb2cnf,AMK_BDD,AMK_BDD
 
 class SatEncoderPowerset:
     _sat_encoder = None
@@ -34,7 +32,7 @@ class SatEncoderPowerset:
         self._encode_runtime(cnf,max_time,activities)
         self._encode_work_load(cnf,max_time,activities)
         self._encode_relations(cnf,max_time,activities,relations)
-        self._encode_resources_with_powerset(cnf,max_time,activities,resources,consumption)
+        # self._encode_resources_with_powerset(cnf,max_time,activities,resources,consumption)
 
 
     
@@ -88,6 +86,28 @@ class SatEncoderPowerset:
                 start_t1 = self.vr.start(activity.id, t1)
                 for t2 in range(t1 + 1, max_time):
                     cnf.add_clause([-start_t1, -self.vr.start(activity.id, t2)])
+
+#        1 ->max_time
+#        star_time ->star_time +duration
+# star_time +duration<=max_time
+# duration
+
+        pbConfig = PBConfig()
+        pbConfig.set_AMK_Encoder(AMK_BDD)
+
+        for activity in activities:
+            activity_id = activity.id
+            var=[]
+            formula=[]
+            pb2 = Pb2cnf(pbConfig)
+            for t in range(max_time):
+                var.append(self.vr.start(activity_id, t))
+            max_var=pb2.encode_at_least_k(var,1,formula,self.vr.var_count)
+            max_var = pb2.encode_at_most_k(var, 1, formula, max_var + 1)
+            self.vr.var_count = max_var + 1
+            for clause in formula:
+                cnf.add_clause(clause)
+
 
     def _encode_start_in_time(self, cnf, max_time: int, activities: List[Activity]):
         # Each activity must start within the given time frame
@@ -150,7 +170,7 @@ class SatEncoderPowerset:
             if relation_type == RelationType.FS:
                  # B does not start before A finishes
                 for t in range(max_time):
-                    literal = self.vr.start(first.get_id(), t)
+                    literal = self.vr.start(activity_id_1, t)
                     for k in range(0, t + activity_1_duration):
                         cnf.add_clause([-literal, -self.vr.start(activity_id_2, k)])
             elif relation_type == RelationType.SS:
@@ -163,13 +183,13 @@ class SatEncoderPowerset:
                 # B does not finish before A finishes
                 for t in range(max_time):
                     literal = self.vr.start(activity_id_1, t)
-                    if t + activity_1_duration - activity_2_duration >0:
+                    if t + activity_1_duration - activity_2_duration > 0:
                         for k in range(0,t + activity_1_duration - activity_2_duration):
                             cnf.add_clause([-literal, -self.vr.start(activity_id_2, k)])
             elif relation_type == RelationType.SF:
                 # B does not start before A finishes
                 for t in range(max_time):
-                    if time - activity_2_duration > 0:
+                    if max_time - activity_2_duration > 0:
                         literal = self.vr.start(activity_id_1, t)
                         for k in range(0,t - activity_2_duration +2):
                             cnf.add_clause([-literal, -self.vr.start(activity_id_2, k)])

@@ -4,16 +4,15 @@ from pathlib import Path
 from utils.helper import export_schedule_to_xlsx
 
 
-# directory_path=Path("assets/input/j30.sm.tgz")
 directory_path=Path("assets/test")
 
-# arr_ago_type=["bdd_bdd"]
 # arr_ago_type=["bdd_bdd","bdd_card","card_bdd","card_card"]
 arr_ago_type=["powerset"]
 if directory_path.exists():
     for ago_type in arr_ago_type:
         for index, file_path in enumerate(directory_path.rglob("*.json")):
-            p = Project(file_path)
+
+            p = Project(data_path=str(file_path))
             id=index+1
 
             file_name=file_path.stem
@@ -21,6 +20,7 @@ if directory_path.exists():
             print(problem_field)
             rcpsp = RcpspAlogithm(p)    
             result=rcpsp.calculate(ago_type)
+            print(file_name,result)
             export_schedule_to_xlsx(
                 id=id,
                 file_name=file_name,
