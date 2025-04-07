@@ -8,11 +8,7 @@ from sat.data.resource import Resource
 from sat.data.relation_type import RelationType
 from sat.data.consumption import Consumption
 from typing import List
-from enum import Enum
 from pypblib.pblib import PBConfig, Pb2cnf,AMK_BDD,AMK_BDD
-
-class BccMode(Enum):
-    PBLIB_AMK_CARD="PBLIB_AMK_CARD"
 
 
 
@@ -48,7 +44,6 @@ class SatEncoderBddBdd:
 
         for activity in activities:
             activity_id = activity.id
-            activity_duration = activity.duration
             var=[]
             formula=[]
             pb2 = Pb2cnf(pbConfig)
@@ -57,6 +52,7 @@ class SatEncoderBddBdd:
 
             max_var=pb2.encode_at_least_k(var,1,formula,self.vr.var_count)
             max_var = pb2.encode_at_most_k(var, 1, formula, max_var + 1)
+            self.vr.var_count=max_var+1
 
             for clause in formula:
                 cnf.add_clause(clause)
@@ -170,12 +166,12 @@ class SatEncoderBddBdd:
                 if consumption_vars_resource:
                     pb2cnf = Pb2cnf(pb_config)
                     cnf_formula=[]
-                    weights = [1] * len(consumption_vars_resource)
-                    max_var=pb2cnf.encode_leq(weights,consumption_vars_resource,bound,cnf_formula,self.vr.var_count)
+                    # weights = [1] * len(consumption_vars_resource)
+                    max_var=pb2cnf.encode_at_most_k(consumption_vars_resource,bound,cnf_formula,self.vr.var_count)
+                    self.vr.var_count=max_var+1
                     for clause in cnf_formula:
                             cnf.add_clause(clause)
                          
-                    # self.bcc.gen_less_than_constraint_pblib_amk_card(cnf,bound,consumption_vars_resource,resource_id,t)
 
     def _get_consume_variables_for_activity_at_instant(self,activity:Activity,consumption:Consumption,instant_time:int):
         consumption_vars=[]
