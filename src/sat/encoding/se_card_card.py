@@ -42,7 +42,6 @@ class SatEncoderCardCard:
 
         for activity in activities:
             activity_id = activity.id
-            activity_duration = activity.duration
             var=[]
             formula=[]
             pb2 = Pb2cnf(pbConfig)
@@ -51,6 +50,7 @@ class SatEncoderCardCard:
 
             max_var=pb2.encode_at_least_k(var,1,formula,self.vr.var_count)
             max_var = pb2.encode_at_most_k(var, 1, formula, max_var + 1)
+            self.vr.var_count=max_var + 1
 
             for clause in formula:
                 cnf.add_clause(clause)
@@ -156,7 +156,6 @@ class SatEncoderCardCard:
                 consume_vars=self._get_consume_variables_for_activity_at_instant(activity,consumption,t)
                 for consume_var in consume_vars:
                     cnf.add_clause([-self.vr.run(activity_id,t),consume_var])
-            
             pb_config=PBConfig()
             pb_config.set_PB_Encoder(AMK_CARD)
             for resource in resources:
@@ -166,8 +165,9 @@ class SatEncoderCardCard:
                 if consumption_vars_resource:
                     pb2cnf = Pb2cnf(pb_config)
                     cnf_formula=[]
-                    weights = [1] * len(consumption_vars_resource)
-                    max_var=pb2cnf.encode_leq(weights,consumption_vars_resource,bound,cnf_formula,self.vr.var_count)
+                    # weights = [1] * len(consumption_vars_resource)
+                    max_var=pb2cnf.encode_at_most_k(consumption_vars_resource,bound,cnf_formula,self.vr.var_count)
+                    self.vr.var_count=max_var+1
                     for clause in cnf_formula:
                             cnf.add_clause(clause)
 

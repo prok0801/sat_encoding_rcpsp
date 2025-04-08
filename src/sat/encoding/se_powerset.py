@@ -32,7 +32,7 @@ class SatEncoderPowerset:
         self._encode_runtime(cnf,max_time,activities)
         self._encode_work_load(cnf,max_time,activities)
         self._encode_relations(cnf,max_time,activities,relations)
-        # self._encode_resources_with_powerset(cnf,max_time,activities,resources,consumption)
+        self._encode_resources_with_powerset(cnf,max_time,activities,resources,consumption)
 
 
     
@@ -78,20 +78,6 @@ class SatEncoderPowerset:
 
     # Ràng buộc 1: Mỗi công việc chỉ bắt đầu một lần
     def _encode_unique_Start_instant(self, cnf, max_time: int, activities: List[Activity]):
-        for activity in activities:
-            # At least one start time is selected
-            cnf.add_clause([self.vr.start(activity.id, t) for t in range(max_time)])
-            # At most one start time is selected
-            for t1 in range(max_time):
-                start_t1 = self.vr.start(activity.id, t1)
-                for t2 in range(t1 + 1, max_time):
-                    cnf.add_clause([-start_t1, -self.vr.start(activity.id, t2)])
-
-#        1 ->max_time
-#        star_time ->star_time +duration
-# star_time +duration<=max_time
-# duration
-
         pbConfig = PBConfig()
         pbConfig.set_AMK_Encoder(AMK_BDD)
 
@@ -201,25 +187,12 @@ class SatEncoderPowerset:
         return None
 
  
-    def _get_consume_variables_for_activity_at_instant(self,activity:Activity,consumption:Consumption,instant_time:int):
-        consumption_vars=[]
-        for i in range(-consumption.amount):
-            consumption_vars.append(self.vr.consume(consumption.activity_id,consumption.resource_id,instant_time,i))
-        return consumption_vars
 
     def _find_consumption_by_activity_id(self,activity_id:int,consumptions:List[Consumption]):
         for consumption in consumptions:
             if consumption.activity_id==activity_id:
                 return consumption
         return None
-    def _get_consume_variables_for_resource_at_instant(self,resource_id:int,consumptions:List[Consumption],instant_time:int):
-        consumption_vars=[]
-        for consumption in consumptions:
-            if consumption.resource_id==resource_id:
-                for i in range (-consumption.amount):
-                    consumption_vars.append(self.vr.consume(consumption.activity_id,consumption.resource_id,instant_time,i))
-        return  consumption_vars      
-
 
 
      

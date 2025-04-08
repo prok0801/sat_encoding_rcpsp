@@ -42,7 +42,6 @@ class SatEncoderBddCard:
 
         for activity in activities:
             activity_id = activity.id
-            activity_duration = activity.duration
             var=[]
             formula=[]
             pb2 = Pb2cnf(pbConfig)
@@ -51,10 +50,11 @@ class SatEncoderBddCard:
 
             max_var=pb2.encode_at_least_k(var,1,formula,self.vr.var_count)
             max_var = pb2.encode_at_most_k(var, 1, formula, max_var + 1)
+            self.vr.var_count=max_var + 1
 
             for clause in formula:
                 cnf.add_clause(clause)
-
+                
     def _encode_start_in_time(self, cnf, max_time: int, activities: List[Activity]):
         # Each activity must start within the given time frame
         for activity in activities:
@@ -151,7 +151,7 @@ class SatEncoderBddCard:
             for activity in activities:
                 activity_id=activity.id
                 consumption=self._find_consumption_by_activity_id(activity_id,consumptions)
-                if not consumption:
+                if consumption is None:
                     continue
                 consume_vars=self._get_consume_variables_for_activity_at_instant(activity,consumption,t)
                 for consume_var in consume_vars:
@@ -165,10 +165,12 @@ class SatEncoderBddCard:
                 if consumption_vars_resource:
                     pb2cnf = Pb2cnf(pb_config)
                     cnf_formula=[]
-                    weights = [1] * len(consumption_vars_resource)
-                    max_var=pb2cnf.encode_leq(weights,consumption_vars_resource,bound,cnf_formula,self.vr.var_count)
+                    # weights = [1] * len(consumption_vars_resource)
+                    max_var=pb2cnf.encode_at_most_k(consumption_vars_resource,bound,cnf_formula,self.vr.var_count)
+                    self.vr.var_count=max_var+1
                     for clause in cnf_formula:
                             cnf.add_clause(clause)
+
     def _get_consume_variables_for_activity_at_instant(self,activity:Activity,consumption:Consumption,instant_time:int):
         consumption_vars=[]
         for i in range(-consumption.amount):
@@ -187,8 +189,6 @@ class SatEncoderBddCard:
                 for i in range (-consumption.amount):
                     consumption_vars.append(self.vr.consume(consumption.activity_id,consumption.resource_id,instant_time,i))
         return  consumption_vars      
-
-
 
      
         
