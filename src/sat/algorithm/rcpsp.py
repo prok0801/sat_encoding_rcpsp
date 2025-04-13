@@ -10,9 +10,32 @@ from sat.encoding.se_card_bdd import SatEncoderCardBdd
 from sat.encoding.se_card_card import SatEncoderCardCard
 from sat.encoding.se_card_nsc import SatEncoderCardNsc
 from sat.encoding.se_powerset import SatEncoderPowerset
-import time
 from  sat.validate import  validate_project
+import threading
+import time
 
+class TimeLimitExpired(Exception):
+    pass
+
+def timeout(func, args=(), kwargs={}, timeout_duration=1, default=None):
+    class InterruptableThread(threading.Thread):
+        def __init__(self):
+            threading.Thread.__init__(self)
+            self.result = None
+
+        def run(self):
+            try:
+                self.result = func(*args, **kwargs)
+            except Exception as e:
+                self.result = default
+
+    it = InterruptableThread()
+    it.start()
+    it.join(timeout_duration)
+    if it.is_alive():  # Note: changed isAlive() to is_alive() for newer Python versions
+        raise TimeLimitExpired()
+    else:
+        return it.result
 
 class RcpspAlogithm:
     def __init__(self, project:Project):
@@ -40,12 +63,22 @@ class RcpspAlogithm:
             sat_encoder=SatEncoderPowerset.get_sat_encoder()
         
         start_time = time.time()
-        sat_encoder.handle(self.cnf,self.project)
-        result = self.solve_problem()
-        end_time = time.time()
-        
-        result['time'] = round(end_time - start_time, 3)
-        
+        try:
+            timeout(
+                sat_encoder.handle,
+                args=(self.cnf, self.project),
+                timeout_duration=900
+            )
+            result = self.solve_problem()
+            end_time = time.time()
+            result['time'] = round(end_time - start_time, 3)
+        except TimeLimitExpired:
+            result = {
+                'vars': self.cnf.nof_vars(),
+                'clauses': self.cnf.nof_clauses(),
+                'status': 'timeout',
+                'time': 900,
+            }
         self._reset()
         return result
 
@@ -54,14 +87,14 @@ class RcpspAlogithm:
         status="unsat"
         if self.cnf.solve():
             status="sat"
-            # try:
-            #     schedule = self.decoder.handle(self.cnf, self.project)
-            #     is_valid, validation_results =validate_project(schedule,self.project)
-            #     print("is_valid",is_valid)
-            #     print("validation_results",validation_results)
-            # except Exception as e:
-            #     status="error"
-            #     print(e)
+            try:
+                schedule = self.decoder.handle(self.cnf, self.project)
+                # is_valid, validation_results =validate_project(schedule,self.project)
+                # print("is_valid",is_valid)
+                print("schedule",schedule)
+            except Exception as e:
+                status="error"
+                print(e)
             
         result = {
             'vars': self.cnf.nof_vars(),

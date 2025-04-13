@@ -7,6 +7,7 @@ from utils.helper import export_schedule_to_xlsx
 directory_path=Path("assets/test")
 
 arr_ago_type=["bdd_bdd","bdd_card","card_bdd","card_card","bdd_nsc","card_nsc"]
+arr_ago_type=["powerset"]
 if directory_path.exists():
     for ago_type in arr_ago_type:
         for index, file_path in enumerate(directory_path.rglob("*.json")):
